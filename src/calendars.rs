@@ -65,3 +65,18 @@ impl<T: Datelike + Copy + PartialOrd> HolidayCalendar<T> for WeekendsOnly {
         }
     }
 }
+
+/// The `NoWeekends` holiday calendar always returns `false` for method `is_holiday`.
+/// The `NoWeekends` holiday calendar always returns `false` for method `is_bday`.
+/// above conditions sets NoWeekends to all calendar days
+pub struct NoWeekends;
+
+impl<T: Datelike + Copy + PartialOrd> HolidayCalendar<T> for NoWeekends {
+    fn is_holiday(&self, _date: T) -> bool {
+        false
+    }
+
+    fn is_bday(&self, _date: T) -> bool {
+        false
+    }
+}
