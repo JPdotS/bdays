@@ -163,6 +163,133 @@ fn test_weekend_calendar_cached() {
     weekend_calendar_tests(cal);
 }
 
+fn no_weekend_calendar_tests<H: HolidayCalendar<NaiveDate>>(cal: H) {
+
+    {
+        let dt = NaiveDate::from_ymd(2020, 7, 3);
+        assert_eq!(cal.is_bday(dt), true);
+    }
+
+    {
+        let dt = NaiveDate::from_ymd(2020, 7, 4);
+        assert_eq!(cal.is_bday(dt), true);
+    }
+
+    {
+        let dt = NaiveDate::from_ymd(2020, 7, 5);
+        assert_eq!(cal.is_bday(dt), true)
+    }
+
+    {
+        let dt = NaiveDate::from_ymd(2020, 7, 6);
+        assert_eq!(cal.is_bday(dt), true)
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2016, 9, 25);
+        let d1 = NaiveDate::from_ymd(2016, 9, 28);
+        assert_eq!(cal.bdays(d0, d1), 3);
+        assert_eq!(cal.bdays(d1, d0), -3);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 9, 2);
+        assert_eq!(cal.bdays(d0, d1), 7);
+        assert_eq!(cal.bdays(d1, d0), -7);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 9, 3);
+        assert_eq!(cal.bdays(d0, d1), 8);
+        assert_eq!(cal.bdays(d1, d0), -8);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 9, 9);
+        assert_eq!(cal.bdays(d0, d1), 14);
+        assert_eq!(cal.bdays(d1, d0), -14);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 9, 10);
+        assert_eq!(cal.bdays(d0, d1), 15);
+        assert_eq!(cal.bdays(d1, d0), -15);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 8, 30);
+        assert_eq!(cal.bdays(d0, d1), 4);
+        assert_eq!(cal.bdays(d1, d0), -4);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 8, 27);
+        assert_eq!(cal.bdays(d0, d1), 1);
+        assert_eq!(cal.bdays(d1, d0), -1);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 8, 26);
+        assert_eq!(cal.bdays(d0, d1), 0);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 8, 19);
+        assert_eq!(cal.bdays(d0, d1), -7);
+        assert_eq!(cal.bdays(d1, d0), 7);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 26);
+        let d1 = NaiveDate::from_ymd(2019, 8, 25);
+        assert_eq!(cal.bdays(d0, d1), -1);
+        assert_eq!(cal.bdays(d1, d0), 1);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 24);
+        let d1 = NaiveDate::from_ymd(2019, 8, 25);
+        assert_eq!(cal.bdays(d0, d1), 1);
+        assert_eq!(cal.bdays(d1, d0), -1);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 24);
+        let d1 = NaiveDate::from_ymd(2019, 8, 26);
+        assert_eq!(cal.bdays(d0, d1), 2);
+        assert_eq!(cal.bdays(d1, d0), -2);
+    }
+
+    {
+        let d0 = NaiveDate::from_ymd(2019, 8, 23);
+        let d1 = NaiveDate::from_ymd(2019, 8, 24);
+        assert_eq!(cal.bdays(d0, d1), 1);
+        assert_eq!(cal.bdays(d1, d0), -1);
+    }
+}
+
+#[test]
+fn test_no_weekend_calendar_no_cache() {
+    let cal = calendars::NoWeekends;
+    no_weekend_calendar_tests(cal);
+}
+
+#[test]
+fn test_no_weekend_calendar_cached() {
+    let dt_min = NaiveDate::from_ymd(2015, 1, 1);
+    let dt_max = NaiveDate::from_ymd(2025, 1, 1);
+    let cal = HolidayCalendarCache::new(calendars::NoWeekends, dt_min, dt_max);
+    no_weekend_calendar_tests(cal);
+}
+
 #[test]
 fn test_arith() {
     assert_eq!(3 / 2, 1);
