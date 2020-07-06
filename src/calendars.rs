@@ -79,3 +79,33 @@ impl<T: Datelike + Copy + PartialOrd> HolidayCalendar<T> for NoWeekends {
         true
     }
 }
+
+
+/// Polymorphic holiday calendar.
+pub enum HolidayCalendars {
+    NoWeekends(NoWeekends),
+    WeekendsOnly(WeekendsOnly)
+}
+
+impl<T: Datelike + Copy + PartialOrd> HolidayCalendar<T> for HolidayCalendars {
+    fn is_holiday(&self, _date: T) -> bool {
+        match self {
+            HolidayCalendars::NoWeekends(no_weekends) => no_weekends.is_holiday(_date),
+            HolidayCalendars::WeekendsOnly(weekends_only )=> weekends_only.is_holiday(_date)
+        }
+    }
+
+    fn is_bday(&self, _date: T) -> bool {
+        match self {
+            HolidayCalendars::NoWeekends(no_weekends) => no_weekends.is_bday(_date),
+            HolidayCalendars::WeekendsOnly(weekends_only )=> weekends_only.is_bday(_date)
+        }
+    }
+
+    fn bdays(&self, d0: T, d1: T) -> i32 {
+        match self {
+            HolidayCalendars::NoWeekends(no_weekends) => no_weekends.bdays(d0, d1),
+            HolidayCalendars::WeekendsOnly(weekends_only )=> weekends_only.bdays(d0, d1)
+        }
+    }
+}

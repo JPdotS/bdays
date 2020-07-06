@@ -290,6 +290,51 @@ fn test_no_weekend_calendar_cached() {
     no_weekend_calendar_tests(cal);
 }
 
+
+fn get_gen_cal_no_cache(t: char) -> calendars::HolidayCalendars {
+    match t {
+        'n' => calendars::HolidayCalendars::NoWeekends(calendars::NoWeekends),
+        _ => calendars::HolidayCalendars::WeekendsOnly(calendars::WeekendsOnly)
+    }
+}
+
+#[test]
+fn test_holiday_cal_calendar_no_cache() {
+
+    let gen_cal_n = calendars::HolidayCalendars::NoWeekends(calendars::NoWeekends);
+    no_weekend_calendar_tests(gen_cal_n);
+
+    let gen_cal_w = calendars::HolidayCalendars::WeekendsOnly(calendars::WeekendsOnly);
+    weekend_calendar_tests(gen_cal_w);
+
+    let gen_cal = get_gen_cal_no_cache('n');
+    no_weekend_calendar_tests(gen_cal);
+
+    let gen_cal2 = get_gen_cal_no_cache('w');
+    weekend_calendar_tests(gen_cal2);
+}
+
+
+fn get_gen_cal_cached(t: char) -> HolidayCalendarCache<NaiveDate> {
+    let dt_min = NaiveDate::from_ymd(2015, 1, 1);
+    let dt_max = NaiveDate::from_ymd(2025, 1, 1);
+    match t {
+        'n' =>  HolidayCalendarCache::new(calendars::HolidayCalendars::NoWeekends(calendars::NoWeekends), dt_min, dt_max),
+        _ => HolidayCalendarCache::new(calendars::HolidayCalendars::WeekendsOnly(calendars::WeekendsOnly), dt_min, dt_max)
+    }
+}
+
+#[test]
+fn test_holiday_cal_calendar_cached() {
+
+    let gen_cal = get_gen_cal_cached('n');
+    no_weekend_calendar_tests(gen_cal);
+
+    let gen_cal2 = get_gen_cal_cached('w');
+    weekend_calendar_tests(gen_cal2);
+}
+
+
 #[test]
 fn test_arith() {
     assert_eq!(3 / 2, 1);
