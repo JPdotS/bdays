@@ -189,10 +189,9 @@ pub trait HolidayCalendar<T: Datelike + Copy + PartialOrd> {
     }
 
     /// Returns the number of business days between `d0` and `d1`.
-    fn bdays(&self, d0: T, d1: T) -> i32 {
-        // do not auto adjust dates
-        // d0 = self.to_bday(d0, true);
-        // d1 = self.to_bday(d1, true);
+    fn bdays(&self, mut d0: T, mut d1: T) -> i32 {
+        d0 = self.to_bday(d0, true);
+        d1 = self.to_bday(d1, true);
 
         let mut from: T;
         let to: T;
